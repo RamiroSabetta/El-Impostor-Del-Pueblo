@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Impostor del Pueblo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Pantalla Inicial -->
+    <div id="pantalla-inicial" class="pantalla activa">
+        <div class="contenedor">
+            <h1 class="titulo-principal">El Impostor del Pueblo</h1>
+            <div class="formulario-jugadores">
+                <h2>Configuración del Juego</h2>
+                <div class="input-grupo">
+                    <label for="num-impostores">Número de Impostores:</label>
+                    <input type="number" id="num-impostores" min="1" value="1" max="5">
+                </div>
+                <div class="input-grupo">
+                    <label for="nombre-jugador">Nombre del Jugador:</label>
+                    <input type="text" id="nombre-jugador" placeholder="Ingresa un nombre">
+                    <button id="agregar-jugador" class="btn">Agregar Jugador</button>
+                </div>
+                <div id="lista-jugadores" class="lista-jugadores"></div>
+                <button id="iniciar-juego" class="btn btn-principal" disabled>Iniciar Juego</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pantalla de Tarjetas -->
+    <div id="pantalla-tarjetas" class="pantalla">
+        <div class="contenedor">
+            <h2>Tarjetas de Jugadores</h2>
+            <div id="contenedor-tarjetas" class="contenedor-tarjetas"></div>
+            <button id="todos-vieron" class="btn btn-principal">Todos Vieron su Tarjeta</button>
+        </div>
+    </div>
+
+    <!-- Pantalla de Revelación -->
+    <div id="pantalla-revelacion" class="pantalla">
+        <div class="contenedor">
+            <h2>Revelación</h2>
+            <div id="info-juego" class="info-juego"></div>
+            <button id="revelar-impostores" class="btn btn-principal">Revelar Impostores</button>
+            <div id="resultado-impostores" class="resultado-impostores"></div>
+            <button id="nuevo-juego" class="btn btn-secundario">Nuevo Juego</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
