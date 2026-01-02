@@ -1,16 +1,16 @@
-// Array de palabras con sus pistas
-// Puedes agregar más palabras aquí siguiendo el formato: { palabra: "palabra", pista: "pista para el impostor" }
+// Array de palabras con sus pistas (una sola palabra)
+// Puedes agregar más palabras aquí siguiendo el formato: { palabra: "palabra", pista: "pista" }
 const palabras = [
-    { palabra: "Hospital", pista: "Un lugar donde la gente va cuando está enferma" },
-    { palabra: "Escuela", pista: "Un lugar donde los niños aprenden" },
-    { palabra: "Restaurante", pista: "Un lugar donde se come comida preparada" },
-    { palabra: "Aeropuerto", pista: "Un lugar donde los aviones despegan y aterrizan" },
-    { palabra: "Biblioteca", pista: "Un lugar lleno de libros que puedes leer" },
-    { palabra: "Supermercado", pista: "Un lugar donde compras comida y productos" },
-    { palabra: "Playa", pista: "Un lugar con arena y agua donde la gente va a nadar" },
-    { palabra: "Montaña", pista: "Un lugar alto con rocas y naturaleza" },
-    { palabra: "Ciudad", pista: "Un lugar grande con muchos edificios y personas" },
-    { palabra: "Bosque", pista: "Un lugar lleno de árboles y animales salvajes" }
+    { palabra: "Hospital", pista: "Enfermedad" },
+    { palabra: "Escuela", pista: "Estudiar" },
+    { palabra: "Restaurante", pista: "Comida" },
+    { palabra: "Aeropuerto", pista: "Avión" },
+    { palabra: "Biblioteca", pista: "Libros" },
+    { palabra: "Supermercado", pista: "Compras" },
+    { palabra: "Playa", pista: "Arena" },
+    { palabra: "Montaña", pista: "Alto" },
+    { palabra: "Ciudad", pista: "Edificios" },
+    { palabra: "Bosque", pista: "Árboles" }
 ];
 
 // Estado del juego
@@ -34,6 +34,8 @@ const revelarImpostoresBtn = document.getElementById('revelar-impostores');
 const nuevoJuegoBtn = document.getElementById('nuevo-juego');
 const infoJuego = document.getElementById('info-juego');
 const resultadoImpostores = document.getElementById('resultado-impostores');
+const masInfoBtn = document.getElementById('mas-info');
+const infoDetallada = document.getElementById('info-detallada');
 
 // Event Listeners
 agregarJugadorBtn.addEventListener('click', agregarJugador);
@@ -46,6 +48,7 @@ iniciarJuegoBtn.addEventListener('click', iniciarJuego);
 todosVieronBtn.addEventListener('click', mostrarPantallaRevelacion);
 revelarImpostoresBtn.addEventListener('click', revelarImpostores);
 nuevoJuegoBtn.addEventListener('click', nuevoJuego);
+masInfoBtn.addEventListener('click', mostrarMasInfo);
 
 // Funciones
 function agregarJugador() {
@@ -147,19 +150,34 @@ function crearTarjetas() {
             <div class="tarjeta-contenido">
                 ${esImpostor 
                     ? `<div class="tarjeta-impostor">ERES EL IMPOSTOR</div>
-                       <div class="tarjeta-pista">Pista: ${palabraActual.pista}</div>
-                       <div class="tarjeta-mensaje">Tu misión es descubrir la palabra sin que te descubran</div>`
-                    : `<div class="tarjeta-palabra">${palabraActual.palabra}</div>
-                       <div class="tarjeta-pista">Pista: ${palabraActual.pista}</div>`
+                       <div class="tarjeta-pista">${palabraActual.pista}</div>`
+                    : `<div class="tarjeta-palabra">${palabraActual.palabra}</div>`
                 }
             </div>
-            <div class="tarjeta-mensaje" style="display: ${esImpostor ? 'none' : 'block'};">
+            <div class="tarjeta-mensaje">
                 Haz clic para ver tu tarjeta
             </div>
         `;
         
         tarjeta.addEventListener('click', () => {
-            tarjeta.classList.add('vista');
+            if (!tarjeta.classList.contains('vista') && !tarjeta.classList.contains('mostrando')) {
+                // Marcar como mostrando para evitar múltiples clics
+                tarjeta.classList.add('mostrando');
+                
+                // Mostrar el contenido
+                const contenido = tarjeta.querySelector('.tarjeta-contenido');
+                const mensaje = tarjeta.querySelector('.tarjeta-mensaje');
+                contenido.style.display = 'block';
+                mensaje.style.display = 'none';
+                
+                // Después de 5 segundos, ocultar el contenido y marcar como vista
+                setTimeout(() => {
+                    contenido.style.display = 'none';
+                    tarjeta.classList.add('vista');
+                    tarjeta.classList.remove('mostrando');
+                    tarjeta.style.pointerEvents = 'none';
+                }, 5000);
+            }
         });
         
         contenedorTarjetas.appendChild(tarjeta);
@@ -173,16 +191,32 @@ function mostrarPantallaRevelacion() {
     // Seleccionar jugador que empieza aleatoriamente
     const jugadorInicia = jugadores[Math.floor(Math.random() * jugadores.length)];
     
+    // Mostrar solo quién empieza (visible para todos)
     infoJuego.innerHTML = `
         <h3>Información del Juego</h3>
+        <p><strong>Jugador que empieza:</strong> ${jugadorInicia}</p>
+    `;
+    
+    // Preparar información detallada (oculta inicialmente)
+    infoDetallada.innerHTML = `
         <p><strong>Palabra:</strong> ${palabraActual.palabra}</p>
         <p><strong>Pista:</strong> ${palabraActual.pista}</p>
-        <p><strong>Jugador que empieza:</strong> ${jugadorInicia}</p>
         <p><strong>Número de impostores:</strong> ${impostores.length}</p>
     `;
+    infoDetallada.style.display = 'none';
     
     resultadoImpostores.classList.remove('mostrar');
     resultadoImpostores.innerHTML = '';
+}
+
+function mostrarMasInfo() {
+    if (infoDetallada.style.display === 'none' || infoDetallada.style.display === '') {
+        infoDetallada.style.display = 'block';
+        masInfoBtn.textContent = 'Ocultar Info';
+    } else {
+        infoDetallada.style.display = 'none';
+        masInfoBtn.textContent = 'Más Info';
+    }
 }
 
 function revelarImpostores() {
@@ -222,6 +256,8 @@ function nuevoJuego() {
     contenedorTarjetas.innerHTML = '';
     resultadoImpostores.classList.remove('mostrar');
     resultadoImpostores.innerHTML = '';
+    infoDetallada.style.display = 'none';
+    masInfoBtn.textContent = 'Más Info';
     
     // Volver a pantalla inicial
     pantallaRevelacion.classList.remove('activa');

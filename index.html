@@ -15,7 +15,7 @@
                 <h2>Configuración del Juego</h2>
                 <div class="input-grupo">
                     <label for="num-impostores">Número de Impostores:</label>
-                    <input type="number" id="num-impostores" min="1" value="1" max="5">
+                    <input type="number" id="num-impostores" min="1" value="1" max="99">
                 </div>
                 <div class="input-grupo">
                     <label for="nombre-jugador">Nombre del Jugador:</label>
@@ -42,6 +42,8 @@
         <div class="contenedor">
             <h2>Revelación</h2>
             <div id="info-juego" class="info-juego"></div>
+            <button id="mas-info" class="btn btn-secundario">Más Info</button>
+            <div id="info-detallada" class="info-detallada"></div>
             <button id="revelar-impostores" class="btn btn-principal">Revelar Impostores</button>
             <div id="resultado-impostores" class="resultado-impostores"></div>
             <button id="nuevo-juego" class="btn btn-secundario">Nuevo Juego</button>
