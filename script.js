@@ -145,12 +145,17 @@ function crearTarjetas() {
         
         const tarjeta = document.createElement('div');
         tarjeta.className = 'tarjeta';
+        if (esImpostor) {
+            tarjeta.classList.add('tarjeta-impostor-tipo');
+        } else {
+            tarjeta.classList.add('tarjeta-jugador-tipo');
+        }
         tarjeta.innerHTML = `
             <div class="tarjeta-nombre">${jugador}</div>
             <div class="tarjeta-contenido">
                 ${esImpostor 
                     ? `<div class="tarjeta-impostor">ERES EL IMPOSTOR</div>
-                       <div class="tarjeta-pista">${palabraActual.pista}</div>`
+                       <div class="tarjeta-pista">${palabraActual.pista.toUpperCase()}</div>`
                     : `<div class="tarjeta-palabra">${palabraActual.palabra}</div>`
                 }
             </div>
@@ -160,23 +165,25 @@ function crearTarjetas() {
         `;
         
         tarjeta.addEventListener('click', () => {
-            if (!tarjeta.classList.contains('vista') && !tarjeta.classList.contains('mostrando')) {
-                // Marcar como mostrando para evitar múltiples clics
+            if (tarjeta.classList.contains('vista')) {
+                // Si ya está vista, no hacer nada
+                return;
+            }
+            
+            const contenido = tarjeta.querySelector('.tarjeta-contenido');
+            const mensaje = tarjeta.querySelector('.tarjeta-mensaje');
+            
+            if (tarjeta.classList.contains('mostrando')) {
+                // Segundo toque: ocultar y marcar como vista
+                contenido.style.display = 'none';
+                tarjeta.classList.remove('mostrando');
+                tarjeta.classList.add('vista');
+                tarjeta.style.pointerEvents = 'none';
+            } else {
+                // Primer toque: mostrar contenido
                 tarjeta.classList.add('mostrando');
-                
-                // Mostrar el contenido
-                const contenido = tarjeta.querySelector('.tarjeta-contenido');
-                const mensaje = tarjeta.querySelector('.tarjeta-mensaje');
                 contenido.style.display = 'block';
                 mensaje.style.display = 'none';
-                
-                // Después de 5 segundos, ocultar el contenido y marcar como vista
-                setTimeout(() => {
-                    contenido.style.display = 'none';
-                    tarjeta.classList.add('vista');
-                    tarjeta.classList.remove('mostrando');
-                    tarjeta.style.pointerEvents = 'none';
-                }, 5000);
             }
         });
         
@@ -207,39 +214,50 @@ function mostrarPantallaRevelacion() {
     
     resultadoImpostores.classList.remove('mostrar');
     resultadoImpostores.innerHTML = '';
+    masInfoBtn.textContent = 'Más Información';
+    revelarImpostoresBtn.textContent = 'Revelar Impostores';
 }
 
 function mostrarMasInfo() {
     if (infoDetallada.style.display === 'none' || infoDetallada.style.display === '') {
         infoDetallada.style.display = 'block';
-        masInfoBtn.textContent = 'Ocultar Info';
+        masInfoBtn.textContent = 'Ocultar Información';
     } else {
         infoDetallada.style.display = 'none';
-        masInfoBtn.textContent = 'Más Info';
+        masInfoBtn.textContent = 'Más Información';
     }
 }
 
 function revelarImpostores() {
-    resultadoImpostores.classList.add('mostrar');
-    resultadoImpostores.innerHTML = '<h3 style="margin-bottom: 15px;">Resultados:</h3>';
-    
-    // Mostrar impostores
-    impostores.forEach(impostor => {
-        const div = document.createElement('div');
-        div.className = 'impostor-revelado';
-        div.textContent = `🔴 ${impostor} - IMPOSTOR`;
-        resultadoImpostores.appendChild(div);
-    });
-    
-    // Mostrar jugadores normales
-    jugadores.forEach(jugador => {
-        if (!impostores.includes(jugador)) {
+    if (resultadoImpostores.classList.contains('mostrar')) {
+        // Si ya está mostrando, ocultar
+        resultadoImpostores.classList.remove('mostrar');
+        revelarImpostoresBtn.textContent = 'Revelar Impostores';
+    } else {
+        // Mostrar impostores
+        resultadoImpostores.classList.add('mostrar');
+        resultadoImpostores.innerHTML = '<h3 style="margin-bottom: 15px;">Resultados:</h3>';
+        
+        // Mostrar impostores
+        impostores.forEach(impostor => {
             const div = document.createElement('div');
-            div.className = 'jugador-normal';
-            div.textContent = `✅ ${jugador} - Ciudadano`;
+            div.className = 'impostor-revelado';
+            div.textContent = `${impostor} - IMPOSTOR`;
             resultadoImpostores.appendChild(div);
-        }
-    });
+        });
+        
+        // Mostrar jugadores normales
+        jugadores.forEach(jugador => {
+            if (!impostores.includes(jugador)) {
+                const div = document.createElement('div');
+                div.className = 'jugador-normal';
+                div.textContent = `${jugador} - Ciudadano`;
+                resultadoImpostores.appendChild(div);
+            }
+        });
+        
+        revelarImpostoresBtn.textContent = 'Ocultar Impostores';
+    }
 }
 
 function nuevoJuego() {
@@ -257,7 +275,8 @@ function nuevoJuego() {
     resultadoImpostores.classList.remove('mostrar');
     resultadoImpostores.innerHTML = '';
     infoDetallada.style.display = 'none';
-    masInfoBtn.textContent = 'Más Info';
+    masInfoBtn.textContent = 'Más Información';
+    revelarImpostoresBtn.textContent = 'Revelar Impostores';
     
     // Volver a pantalla inicial
     pantallaRevelacion.classList.remove('activa');
